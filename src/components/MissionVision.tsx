@@ -15,8 +15,8 @@ export default function MissionVision() {
 
             {/* Content */}
             <div className="pt-4">
-              <h3 className="text-3xl font-extrabold text-[#164e3f] tracking-wider mb-6">
-                MISSION
+              <h3 className="text-3xl font-extrabold tracking-wider mb-6">
+                <span className="text-gradient-brand">MISSION</span>
               </h3>
               <p className="text-sm sm:text-base text-[#1b3d32] font-normal leading-relaxed max-w-md mx-auto">
                 To provide environmental sustainability through IoT-enabled recycling
@@ -37,8 +37,8 @@ export default function MissionVision() {
 
             {/* Content */}
             <div className="pt-4">
-              <h3 className="text-3xl font-extrabold text-[#A32801] tracking-wider mb-6">
-                VISION
+              <h3 className="text-3xl font-extrabold tracking-wider mb-6">
+                <span className="text-gradient-brand">VISION</span>
               </h3>
               <p className="text-sm sm:text-base text-[#1b3d32] font-normal leading-relaxed max-w-md mx-auto">
                 To empower communities by leveraging smart recycling systems that

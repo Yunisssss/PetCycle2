@@ -9,7 +9,7 @@ export default function HowItWorks() {
         {/* Title */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#143b2f] tracking-tight">
-            How PetCycle Works
+            How PetCycle Works?
           </h2>
         </div>
 

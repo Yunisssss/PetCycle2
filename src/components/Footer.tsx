@@ -4,7 +4,13 @@ import { Mail } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer id="support" className="relative bg-[#2c0c05] text-white pt-16 pb-10 border-t-4 border-[#164e3f]">
+    <footer
+      id="support"
+      className="relative text-white pt-16 pb-10 border-t border-white/10"
+      style={{
+        background: "linear-gradient(90deg, #02241E 0%, #140903 50%, #5A1601 100%)",
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
           {/* Large Stylized Logo */}

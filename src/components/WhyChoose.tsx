@@ -39,9 +39,9 @@ export default function WhyChoose() {
         {/* Title */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            <span className="text-[#143b2f]">Why Choose </span>
-            <span className="text-[#A32801]">Pet</span>
-            <span className="text-[#00B46B]">Cycle</span>
+            <span className="text-gradient-brand">
+              Why Choose PetCycle
+            </span>
           </h2>
         </div>
 
@@ -64,7 +64,7 @@ export default function WhyChoose() {
 
               {/* Card Body */}
               <div className="p-6 sm:p-7 flex-1 flex flex-col justify-start">
-                <h3 className="text-xl font-bold text-[#A32801] tracking-tight mb-2.5">
+                <h3 className="text-xl font-bold tracking-tight mb-2.5 text-[#A32801]">
                   {card.title}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">

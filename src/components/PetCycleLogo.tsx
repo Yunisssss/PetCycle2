@@ -33,13 +33,12 @@ export default function PetCycleLogo({
         className={`${iconDimensions.imgClass} w-auto object-contain transition-transform duration-200 group-hover:scale-105`}
       />
 
-      {/* Brand Text in Atma Font */}
+      {/* Brand Text in Atma Font with Horizontal Brand Gradient */}
       <span
         style={{ fontFamily: "'Atma', var(--font-atma), cursive, sans-serif" }}
-        className={`${atma.className} font-atma font-bold tracking-tight leading-none flex items-baseline ${iconDimensions.textClass}`}
+        className={`${atma.className} font-atma font-bold tracking-tight leading-none text-gradient-brand ${iconDimensions.textClass}`}
       >
-        <span className="text-[#A32801]">Pet</span>
-        <span className="text-[#00B46B]">Cycle</span>
+        PetCycle
       </span>
     </div>
   );

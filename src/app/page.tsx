@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import KeyFeatures from "@/components/KeyFeatures";
-import HowItWorks from "@/components/HowItWorks";
+import FeaturesAndWorkflow from "@/components/FeaturesAndWorkflow";
 import BannerStrip from "@/components/BannerStrip";
 import MissionVision from "@/components/MissionVision";
 import WhyChoose from "@/components/WhyChoose";
@@ -25,11 +24,8 @@ export default function Home() {
         {/* Hero Section */}
         <Hero onOpenDemo={() => setIsDemoOpen(true)} />
 
-        {/* Key Features Interactive Diagram */}
-        <KeyFeatures />
-
-        {/* How PetCycle Works */}
-        <HowItWorks />
+        {/* Combined Side-by-Side: Key Features & How PetCycle Works */}
+        <FeaturesAndWorkflow />
 
         {/* Collect • Recycle • Dispense / Feed • Store • Repeat Banner */}
         <BannerStrip />

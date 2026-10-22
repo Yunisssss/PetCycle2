@@ -18,16 +18,22 @@
   --color-footer-dark: #2b0b04;
 }
 
-body {
-  font-family: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+body, h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-jakarta), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .font-atma {
   font-family: 'Atma', var(--font-atma), cursive, sans-serif !important;
 }
 
-h1, h2, h3 {
-  font-family: 'Atma', var(--font-atma), var(--font-jakarta), sans-serif;
+.text-gradient-brand {
+  background: linear-gradient(90deg, #A32801 0%, #00B46B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  width: fit-content;
 }
 
 @keyframes pulse-subtle {
