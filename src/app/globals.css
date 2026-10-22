@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Atma';
+  src: url('/fonts/Atma-Bold.ttf') format('truetype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-primary-green: #184635;
+  --color-accent-orange: #A32801;
+  --color-eco-green: #00B46B;
+  --color-mint-card: #daf2ea;
+  --color-banner-green: #143b2f;
+  --color-banner-rust: #A32801;
+  --color-footer-dark: #2b0b04;
+}
+
+body {
+  font-family: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+}
+
+.font-atma {
+  font-family: 'Atma', var(--font-atma), cursive, sans-serif !important;
+}
+
+h1, h2, h3 {
+  font-family: 'Atma', var(--font-atma), var(--font-jakarta), sans-serif;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.92;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
