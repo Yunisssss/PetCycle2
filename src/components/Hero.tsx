@@ -3,10 +3,11 @@ import React from "react";
 import Image from "next/image";
 
 interface HeroProps {
-  onOpenDemo: () => void;
+  onGetStarted: () => void;
+  onOpenDemo?: () => void;
 }
 
-export default function Hero({ onOpenDemo }: HeroProps) {
+export default function Hero({ onGetStarted, onOpenDemo }: HeroProps) {
   return (
     <section className="relative w-full h-[520px] md:h-[620px] lg:h-[680px] overflow-hidden bg-slate-900 flex items-center">
       {/* Background Hero Image */}
@@ -41,18 +42,11 @@ export default function Hero({ onOpenDemo }: HeroProps) {
           {/* Call to Action Button */}
           <div className="mt-8 flex flex-wrap gap-4 items-center">
             <button
-              onClick={onOpenDemo}
+              onClick={onGetStarted}
               className="px-7 py-3 rounded-lg bg-[#A32801] hover:bg-[#882100] text-white text-sm sm:text-base font-semibold tracking-wide shadow-lg shadow-[#A32801]/40 hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Get Started
             </button>
-
-            <a
-              href="#how-it-works"
-              className="px-5 py-3 rounded-lg text-white/90 hover:text-white bg-white/10 hover:bg-white/15 backdrop-blur-sm text-sm sm:text-base font-medium transition-all"
-            >
-              Learn More
-            </a>
           </div>
         </div>
       </div>

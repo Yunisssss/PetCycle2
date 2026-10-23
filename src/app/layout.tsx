@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { atma, jakarta } from "@/app/fonts";
 import "./globals.css";
+import { PetCycleProvider } from "@/lib/store";
 
 export const metadata: Metadata = {
   title: "PetCycle | Real Change Begins With A Bottle",
@@ -19,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jakarta.variable} ${atma.variable} scroll-smooth`}>
       <body className="font-sans antialiased text-slate-800 bg-white min-h-screen selection:bg-emerald-100 selection:text-emerald-900">
-        {children}
+        <PetCycleProvider>{children}</PetCycleProvider>
       </body>
     </html>
   );
