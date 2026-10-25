@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { X, Check, ArrowLeft, AlertCircle, ShieldCheck, Building2, User } from "lucide-react";
 import { usePetCycleStore } from "@/lib/store";
 import { UserRole } from "@/lib/types";
+import { createClient } from "@/lib/supabase/client";
 
 export type AuthView =
   | "login"
@@ -156,9 +157,36 @@ export default function LoginModal({
     setForgotSent(true);
   };
 
-  // Google Sign In Simulation
-  const handleGoogleSignIn = () => {
-    handleQuickDemo("user");
+  // Google Sign In with Supabase OAuth
+  const handleGoogleSignIn = async () => {
+    try {
+      const hasAnonKey =
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !hasAnonKey) {
+        setLoginError(
+          "Supabase credentials are not configured in .env.local yet. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)."
+        );
+        return;
+      }
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: location.origin + "/auth/callback",
+        },
+      });
+      if (error) {
+        setLoginError(error.message);
+      }
+    } catch (err: unknown) {
+      setLoginError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while connecting to Supabase."
+      );
+    }
   };
 
   return (
