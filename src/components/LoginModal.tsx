@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { X, Check, ArrowLeft, AlertCircle, ShieldCheck, Building2, User } from "lucide-react";
+import { X, Check, ArrowLeft, AlertCircle, ShieldCheck, Building2, User, Loader2, Eye, EyeOff } from "lucide-react";
 import { usePetCycleStore } from "@/lib/store";
-import { UserRole } from "@/lib/types";
+import { UserRole, AuthUser } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 
 export type AuthView =
@@ -26,8 +26,17 @@ export default function LoginModal({
   initialView = "login",
 }: LoginModalProps) {
   const router = useRouter();
-  const { loginAs } = usePetCycleStore();
+  const { loginAs, setAuthUser } = usePetCycleStore();
   const [view, setView] = useState<AuthView>(initialView);
+
+  // Loading and feedback states
+  const [isLoading, setIsLoading] = useState(false);
+  const [signupSuccessNote, setSignupSuccessNote] = useState("");
+
+  // Password visibility toggles
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showSignupConfirmPassword, setShowSignupConfirmPassword] = useState(false);
 
   // Sign Up Form State
   const [firstName, setFirstName] = useState("");
@@ -46,6 +55,7 @@ export default function LoginModal({
 
   // Forgot Password Form State
   const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotError, setForgotError] = useState("");
   const [forgotSent, setForgotSent] = useState(false);
 
   // Sync initial view when modal opens
@@ -54,7 +64,10 @@ export default function LoginModal({
       setView(initialView);
       setSignupError("");
       setLoginError("");
+      setForgotError("");
       setForgotSent(false);
+      setIsLoading(false);
+      setSignupSuccessNote("");
     }
   }, [isOpen, initialView]);
 
@@ -73,7 +86,13 @@ export default function LoginModal({
     setLoginPassword("");
     setLoginError("");
     setForgotEmail("");
+    setForgotError("");
     setForgotSent(false);
+    setIsLoading(false);
+    setSignupSuccessNote("");
+    setShowLoginPassword(false);
+    setShowSignupPassword(false);
+    setShowSignupConfirmPassword(false);
     onClose();
   };
 
@@ -101,8 +120,8 @@ export default function LoginModal({
     setView("signup-step2");
   };
 
-  // Sign Up Step 2 Submit
-  const handleStep2Submit = (e: React.FormEvent) => {
+  // Sign Up Step 2 Submit - Creates user pre-confirmed via server API route
+  const handleStep2Submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSignupError("");
 
@@ -126,40 +145,193 @@ export default function LoginModal({
       return;
     }
 
-    // Success transition
-    setView("signup-success");
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          username,
+          email,
+          password,
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok || result.error) {
+        setSignupError(result.error || "Failed to create account.");
+        return;
+      }
+
+      // Automatically sign in the new user immediately
+      const supabase = createClient();
+      const { data: signinData } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      });
+
+      const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
+      const newUser: AuthUser = {
+        id: result.user?.id || signinData?.user?.id || "user-" + Date.now(),
+        name: fullName || username.trim(),
+        email: email.trim(),
+        role: "user",
+      };
+      setAuthUser(newUser);
+
+      setSignupSuccessNote("Your account has been created and verified successfully!");
+      setView("signup-success");
+    } catch (err: unknown) {
+      setSignupError(
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred during signup."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Login Submit
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  // Login Submit - Real Supabase signInWithPassword with username resolution and auto-confirm
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
 
-    if (!loginUsername.trim() || !loginPassword) {
-      setLoginError("Please enter your username and password.");
+    const term = loginUsername.trim();
+    if (!term || !loginPassword) {
+      setLoginError("Please enter your email or username and password.");
       return;
     }
 
-    const lower = loginUsername.toLowerCase();
-    if (lower.includes("super")) {
+    // Fast-path demo shortcuts
+    const lower = term.toLowerCase();
+    if (lower === "superadmin") {
       handleQuickDemo("superadmin");
-    } else if (lower.includes("user") || lower.includes("juan")) {
-      handleQuickDemo("user");
-    } else {
+      return;
+    }
+    if (lower === "shelter") {
       handleQuickDemo("shelter");
+      return;
+    }
+    if (lower === "user" || lower === "juan" || lower === "demo_user") {
+      handleQuickDemo("user");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // 1. Resolve identifier (username or email) and ensure email is confirmed
+      let targetEmail = term;
+      try {
+        const res = await fetch("/api/auth/resolve-identifier", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ identifier: term }),
+        });
+        const data = await res.json();
+        if (data.email) {
+          targetEmail = data.email;
+        }
+      } catch {}
+
+      // 2. Sign in with Supabase
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: targetEmail,
+        password: loginPassword,
+      });
+
+      if (error) {
+        setLoginError(error.message);
+        return;
+      }
+
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role, full_name, display_name, avatar_url, shelter_id")
+          .eq("id", data.user.id)
+          .maybeSingle();
+
+        const role = (profile?.role as UserRole) || "user";
+        const loggedUser: AuthUser = {
+          id: data.user.id,
+          name:
+            profile?.full_name ||
+            profile?.display_name ||
+            data.user.user_metadata?.full_name ||
+            data.user.email?.split("@")[0] ||
+            "User",
+          email: data.user.email || "",
+          role,
+          avatar: profile?.avatar_url || data.user.user_metadata?.avatar_url,
+          shelterId: profile?.shelter_id,
+        };
+
+        setAuthUser(loggedUser);
+        resetAll();
+
+        if (role === "superadmin") {
+          router.push("/dashboard/superadmin");
+        } else if (role === "shelter") {
+          router.push("/dashboard/shelter");
+        } else {
+          router.push("/app");
+        }
+      }
+    } catch (err: unknown) {
+      setLoginError(
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred during login."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Forgot Password Submit
-  const handleForgotSubmit = (e: React.FormEvent) => {
+  // Forgot Password Submit - Real Supabase resetPasswordForEmail
+  const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!forgotEmail.trim()) return;
-    setForgotSent(true);
+    setForgotError("");
+
+    if (!forgotEmail.trim()) {
+      setForgotError("Please enter your email address.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        forgotEmail.trim(),
+        {
+          redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+        }
+      );
+
+      if (error) {
+        setForgotError(error.message);
+      } else {
+        setForgotSent(true);
+      }
+    } catch (err: unknown) {
+      setForgotError(
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Google Sign In with Supabase OAuth
   const handleGoogleSignIn = async () => {
     try {
+      setIsLoading(true);
       const hasAnonKey =
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
         process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -186,6 +358,8 @@ export default function LoginModal({
           ? err.message
           : "An error occurred while connecting to Supabase."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -350,7 +524,7 @@ export default function LoginModal({
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your Email Address"
+                  placeholder="Choose a username"
                   className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00B46B]/20 focus:border-[#00B46B] transition-all bg-white"
                 />
               </div>
@@ -373,28 +547,56 @@ export default function LoginModal({
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Password
                 </label>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter Password"
-                  className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00B46B]/20 focus:border-[#00B46B] transition-all bg-white"
-                />
+                <div className="relative">
+                  <input
+                    type={showSignupPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter Password"
+                    className="w-full pl-4 pr-11 py-2.5 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00B46B]/20 focus:border-[#00B46B] transition-all bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupPassword(!showSignupPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5"
+                    aria-label={showSignupPassword ? "Hide password" : "Show password"}
+                  >
+                    {showSignupPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Confirm Password
                 </label>
-                <input
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Enter Password"
-                  className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00B46B]/20 focus:border-[#00B46B] transition-all bg-white"
-                />
+                <div className="relative">
+                  <input
+                    type={showSignupConfirmPassword ? "text" : "password"}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Enter Password"
+                    className="w-full pl-4 pr-11 py-2.5 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00B46B]/20 focus:border-[#00B46B] transition-all bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupConfirmPassword(!showSignupConfirmPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5"
+                    aria-label={showSignupConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showSignupConfirmPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* Agreement Checkbox */}
@@ -423,9 +625,17 @@ export default function LoginModal({
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-full font-semibold text-white bg-[#00B46B] hover:bg-[#009e5e] shadow-sm hover:shadow-md transition-all transform active:scale-[0.99] text-sm tracking-wide"
+                  disabled={isLoading}
+                  className="w-full py-3.5 rounded-full font-semibold text-white bg-[#00B46B] hover:bg-[#009e5e] disabled:opacity-60 shadow-sm hover:shadow-md transition-all transform active:scale-[0.99] text-sm tracking-wide flex items-center justify-center gap-2"
                 >
-                  Done
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Creating Account...</span>
+                    </>
+                  ) : (
+                    <span>Done</span>
+                  )}
                 </button>
               </div>
             </form>
@@ -460,15 +670,18 @@ export default function LoginModal({
             </h2>
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-sm text-slate-500 mt-2">
-              Account created successfully!
+            <p className="text-xs sm:text-sm text-slate-600 mt-2 px-2">
+              {signupSuccessNote || "Account created successfully!"}
             </p>
 
             {/* Proceed Button */}
             <div className="w-full mt-8">
               <button
                 type="button"
-                onClick={() => handleQuickDemo("user")}
+                onClick={() => {
+                  resetAll();
+                  router.push("/app");
+                }}
                 className="w-full py-3.5 rounded-full font-semibold text-white bg-[#00B46B] hover:bg-[#009e5e] shadow-sm hover:shadow-md transition-all transform active:scale-[0.99] text-sm tracking-wide"
               >
                 Proceed to PetCycle App
@@ -511,14 +724,14 @@ export default function LoginModal({
             <form onSubmit={handleLoginSubmit} className="w-full mt-5 space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Username
+                  Email or Username
                 </label>
                 <input
                   type="text"
                   required
                   value={loginUsername}
                   onChange={(e) => setLoginUsername(e.target.value)}
-                  placeholder="Enter your Username"
+                  placeholder="Enter your email or username"
                   className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00B46B]/20 focus:border-[#00B46B] transition-all bg-white"
                 />
               </div>
@@ -527,14 +740,28 @@ export default function LoginModal({
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                   Password
                 </label>
-                <input
-                  type="password"
-                  required
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="Enter Password"
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00B46B]/20 focus:border-[#00B46B] transition-all bg-white"
-                />
+                <div className="relative">
+                  <input
+                    type={showLoginPassword ? "text" : "password"}
+                    required
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="Enter Password"
+                    className="w-full pl-4 pr-11 py-3 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00B46B]/20 focus:border-[#00B46B] transition-all bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-0.5"
+                    aria-label={showLoginPassword ? "Hide password" : "Show password"}
+                  >
+                    {showLoginPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* Forgot Password Link */}
@@ -552,9 +779,17 @@ export default function LoginModal({
               <div className="pt-1">
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-full font-semibold text-white bg-[#00B46B] hover:bg-[#009e5e] shadow-sm hover:shadow-md transition-all transform active:scale-[0.99] text-sm tracking-wide"
+                  disabled={isLoading}
+                  className="w-full py-3.5 rounded-full font-semibold text-white bg-[#00B46B] hover:bg-[#009e5e] disabled:opacity-60 shadow-sm hover:shadow-md transition-all transform active:scale-[0.99] text-sm tracking-wide flex items-center justify-center gap-2"
                 >
-                  Continue
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Signing In...</span>
+                    </>
+                  ) : (
+                    <span>Continue</span>
+                  )}
                 </button>
               </div>
 
@@ -568,8 +803,9 @@ export default function LoginModal({
               {/* Sign In with Google */}
               <button
                 type="button"
+                disabled={isLoading}
                 onClick={handleGoogleSignIn}
-                className="w-full py-3 px-4 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-sm transition-all transform active:scale-[0.99]"
+                className="w-full py-3 px-4 rounded-full border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-60 text-slate-700 font-medium text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-sm transition-all transform active:scale-[0.99]"
               >
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                   <path
@@ -674,6 +910,13 @@ export default function LoginModal({
               and set a new password.
             </p>
 
+            {forgotError && (
+              <div className="mt-3 flex items-center gap-1.5 text-xs text-red-600 bg-red-50 py-1.5 px-3 rounded-lg w-full">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{forgotError}</span>
+              </div>
+            )}
+
             {forgotSent ? (
               <div className="w-full my-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-center animate-fadeIn">
                 <Check className="w-8 h-8 text-[#00B46B] mx-auto mb-2" />
@@ -719,9 +962,17 @@ export default function LoginModal({
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3 px-4 rounded-full font-semibold text-white bg-[#00B46B] hover:bg-[#009e5e] shadow-sm hover:shadow-md transition-all text-sm"
+                    disabled={isLoading}
+                    className="flex-1 py-3 px-4 rounded-full font-semibold text-white bg-[#00B46B] hover:bg-[#009e5e] disabled:opacity-60 shadow-sm hover:shadow-md transition-all text-sm flex items-center justify-center gap-2"
                   >
-                    Continue
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <span>Continue</span>
+                    )}
                   </button>
                 </div>
               </form>

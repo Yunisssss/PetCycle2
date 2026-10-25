@@ -1,10 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePetCycleStore } from "@/lib/store";
-import RoleSwitcherBar from "@/components/dashboard/RoleSwitcherBar";
 import PetCycleLogo from "@/components/PetCycleLogo";
 import {
   Home,
@@ -58,6 +57,11 @@ export default function CommunityUserMobileApp() {
   } = usePetCycleStore();
 
   const [activeTab, setActiveTab] = useState<MobileTab>("home");
+
+  // Ensure community user always lands on the "home" tab upon login
+  useEffect(() => {
+    setActiveTab("home");
+  }, [currentUser?.id]);
   const [leaderboardFilter, setLeaderboardFilter] = useState<"month" | "week" | "all">("month");
   const [shelterFilter, setShelterFilter] = useState<string>("all");
   const [selectedShelterId, setSelectedShelterId] = useState<string | null>(null);
@@ -108,9 +112,6 @@ export default function CommunityUserMobileApp() {
 
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col text-slate-800">
-      {/* 1. Global Role Switcher */}
-      <RoleSwitcherBar />
-
       {/* Frame Mode Toggle Bar (Desktop only) */}
       <div className="hidden md:flex items-center justify-between px-6 py-2.5 bg-slate-800/90 text-slate-300 text-xs border-b border-slate-700">
         <div className="flex items-center gap-2">
@@ -169,10 +170,18 @@ export default function CommunityUserMobileApp() {
 
               <button
                 onClick={() => setActiveTab("profile")}
-                className="w-8 h-8 rounded-full bg-[#143b2f] text-[#daf2ea] font-extrabold text-[11px] flex items-center justify-center shadow-xs shrink-0 ring-2 ring-[#00B46B]/20 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#143b2f] text-[#daf2ea] font-extrabold text-[11px] flex items-center justify-center shadow-xs shrink-0 ring-2 ring-[#00B46B]/20 cursor-pointer overflow-hidden"
                 title={`${currentUser?.name || "Juan Dela Cruz"} (Community Recycler)`}
               >
-                {userInitials}
+                {currentUser?.avatar ? (
+                  <img
+                    src={currentUser.avatar}
+                    alt={currentUser.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  userInitials
+                )}
               </button>
             </div>
           </div>
@@ -532,14 +541,22 @@ export default function CommunityUserMobileApp() {
               <div className="space-y-4 animate-fadeIn">
                 {/* User Info Header */}
                 <div className="p-4 rounded-3xl bg-white border border-slate-200/80 shadow-xs flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-[#143b2f] text-[#daf2ea] flex items-center justify-center font-extrabold text-base ring-2 ring-[#00B46B]/20">
-                    {userInitials}
+                  <div className="w-12 h-12 rounded-full bg-[#143b2f] text-[#daf2ea] flex items-center justify-center font-extrabold text-base ring-2 ring-[#00B46B]/20 overflow-hidden shrink-0">
+                    {currentUser?.avatar ? (
+                      <img
+                        src={currentUser.avatar}
+                        alt={currentUser.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      userInitials
+                    )}
                   </div>
                   <div>
                     <h3 className="font-bold text-sm text-[#143b2f]">{currentUser?.name || "Juan Dela Cruz"}</h3>
                     <div className="text-xs text-[#A32801] font-semibold">Community Recycler</div>
                     <div className="text-[10px] text-slate-400 mt-0.5">
-                      Nickname: Juan D. (Leaderboard Verified)
+                      {currentUser?.email || "juan.recycler@gmail.com"}
                     </div>
                   </div>
                 </div>
@@ -584,7 +601,6 @@ export default function CommunityUserMobileApp() {
                   <ul className="list-disc pl-4 space-y-1 text-slate-600 text-[11px]">
                     <li>Remove liquid from plastic bottles before inserting.</li>
                     <li>Both plastic PET bottles (up to 1.5L) and aluminum cans are accepted.</li>
-                    <li>Items are compressed inside the machine to maximize bin capacity.</li>
                     <li>Every accepted item automatically dispenses food to shelter bowls!</li>
                   </ul>
                 </div>
