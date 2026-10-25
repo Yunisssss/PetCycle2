@@ -19,7 +19,6 @@ import {
   Building2,
   ChevronRight,
 } from "lucide-react";
-import RoleSwitcherBar from "./RoleSwitcherBar";
 import PetCycleLogo from "@/components/PetCycleLogo";
 import { usePetCycleStore } from "@/lib/store";
 
@@ -117,9 +116,6 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col text-slate-800 w-full">
-      {/* 1. Global Role Switcher Bar */}
-      <RoleSwitcherBar />
-
       <div className="flex-1 flex overflow-hidden w-full">
         {/* 2. Desktop Sidebar */}
         <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-slate-200 shrink-0">

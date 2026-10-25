@@ -8,29 +8,9 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-
     if (!error) {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
-
-        const role = profile?.role;
-
-        if (role === "superadmin") {
-          return NextResponse.redirect(`${origin}/dashboard/superadmin`);
-        } else if (role === "shelter") {
-          return NextResponse.redirect(`${origin}/dashboard/shelter`);
-        } else {
-          return NextResponse.redirect(`${origin}/app`);
-        }
-      }
+      // Every Google sign-in routes directly to the community app (/app)
+      return NextResponse.redirect(`${origin}/app`);
     }
   }
 

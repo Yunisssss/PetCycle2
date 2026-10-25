@@ -17,11 +17,13 @@ import {
   INITIAL_TRANSACTIONS,
   INITIAL_LEADERBOARD,
 } from "./mock-data";
+import { createClient } from "./supabase/client";
 
 interface PetCycleStoreContextType {
   currentUser: AuthUser | null;
   currentRole: UserRole | null;
   loginAs: (role: UserRole) => void;
+  setAuthUser: (user: AuthUser | null) => void;
   logout: () => void;
   // Data
   machines: MachineData[];
@@ -63,7 +65,7 @@ export function PetCycleProvider({ children }: { children: React.ReactNode }) {
     INITIAL_LEADERBOARD
   );
 
-  // Restore stored session on mount
+  // Restore stored session on mount & sync Supabase Google Auth
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY_AUTH);
@@ -73,6 +75,67 @@ export function PetCycleProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {
       // Ignore parse errors
+    }
+
+    const hasAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && hasAnonKey) {
+      try {
+        const supabase = createClient();
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) {
+            const googleUser: AuthUser = {
+              id: user.id,
+              name:
+                user.user_metadata?.full_name ||
+                user.user_metadata?.name ||
+                user.email?.split("@")[0] ||
+                "Community Recycler",
+              email: user.email || "",
+              role: "user",
+              avatar:
+                user.user_metadata?.avatar_url ||
+                user.user_metadata?.picture,
+            };
+            setCurrentUser(googleUser);
+            try {
+              localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(googleUser));
+            } catch {}
+          }
+        });
+
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (session?.user) {
+            const googleUser: AuthUser = {
+              id: session.user.id,
+              name:
+                session.user.user_metadata?.full_name ||
+                session.user.user_metadata?.name ||
+                session.user.email?.split("@")[0] ||
+                "Community Recycler",
+              email: session.user.email || "",
+              role: "user",
+              avatar:
+                session.user.user_metadata?.avatar_url ||
+                session.user.user_metadata?.picture,
+            };
+            setCurrentUser(googleUser);
+            try {
+              localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(googleUser));
+            } catch {}
+          }
+        });
+
+        return () => {
+          subscription.unsubscribe();
+        };
+      } catch (err) {
+        console.error("Supabase auth sync error:", err);
+      }
     }
   }, []);
 
@@ -86,11 +149,35 @@ export function PetCycleProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setAuthUser = (user: AuthUser | null) => {
+    setCurrentUser(user);
+    if (user) {
+      try {
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(user));
+      } catch {}
+    } else {
+      try {
+        localStorage.removeItem(STORAGE_KEY_AUTH);
+      } catch {}
+    }
+  };
+
   const logout = () => {
     setCurrentUser(null);
     try {
       localStorage.removeItem(STORAGE_KEY_AUTH);
     } catch {}
+
+    const hasAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && hasAnonKey) {
+      try {
+        const supabase = createClient();
+        supabase.auth.signOut();
+      } catch {}
+    }
   };
 
   // Operational Action 1: Refill Pet Food
@@ -258,6 +345,7 @@ export function PetCycleProvider({ children }: { children: React.ReactNode }) {
         currentUser,
         currentRole: currentUser?.role || null,
         loginAs,
+        setAuthUser,
         logout,
         machines,
         shelters,

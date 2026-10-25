@@ -8,7 +8,14 @@ export const metadata: Metadata = {
   description:
     "Empowering communities through IoT-enabled recycling incentives that automatically feed stray animals.",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/images/petcycle-logo-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/icon.png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [
+      { url: "/images/petcycle-logo-512.png" },
+    ],
   },
 };
 
