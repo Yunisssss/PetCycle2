@@ -20,8 +20,7 @@ export default function Footer() {
 
           {/* Tagline */}
           <p className="max-w-lg text-xs sm:text-sm text-amber-100/80 leading-relaxed mb-6 font-normal">
-            Sends instant alerts when food inventory is low or recycling bins
-            are full, ensuring smooth and continuous operations.
+            An IoT-Enabled Reward-Based Recycling System for Urban Waste Management and Pet Food Dispensing
           </p>
 
           {/* Social Icons */}
