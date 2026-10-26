@@ -56,7 +56,7 @@ export default function Footer() {
 
           {/* Copyright */}
           <p className="text-xs text-amber-100/60 font-light tracking-wide">
-            &copy; 2024 PetCycle. All rights reserved.
+            &copy; 2026 PetCycle. All rights reserved.
           </p>
         </div>
       </div>
