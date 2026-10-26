@@ -18,6 +18,7 @@ import {
   INITIAL_LEADERBOARD,
 } from "./mock-data";
 import { createClient } from "./supabase/client";
+import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 
 interface PetCycleStoreContextType {
   currentUser: AuthUser | null;
@@ -56,7 +57,7 @@ const STORAGE_KEY_AUTH = "petcycle_auth_user_v1";
 export function PetCycleProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [machines, setMachines] = useState<MachineData[]>(INITIAL_MACHINES);
-  const [shelters, setShelters] = useState<ShelterData[]>(INITIAL_SHELTERS);
+  const [shelters] = useState<ShelterData[]>(INITIAL_SHELTERS);
   const [alerts, setAlerts] = useState<SystemAlert[]>(INITIAL_ALERTS);
   const [transactions, setTransactions] = useState<TransactionItem[]>(
     INITIAL_TRANSACTIONS
@@ -71,7 +72,9 @@ export function PetCycleProvider({ children }: { children: React.ReactNode }) {
       const stored = localStorage.getItem(STORAGE_KEY_AUTH);
       if (stored) {
         const parsed = JSON.parse(stored) as AuthUser;
-        setCurrentUser(parsed);
+        queueMicrotask(() => {
+          setCurrentUser(parsed);
+        });
       }
     } catch {
       // Ignore parse errors
@@ -84,7 +87,8 @@ export function PetCycleProvider({ children }: { children: React.ReactNode }) {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && hasAnonKey) {
       try {
         const supabase = createClient();
-        supabase.auth.getUser().then(({ data: { user } }) => {
+        supabase.auth.getUser().then(({ data }: { data: { user: User | null } }) => {
+          const user = data.user;
           if (user) {
             const googleUser: AuthUser = {
               id: user.id,
@@ -108,7 +112,7 @@ export function PetCycleProvider({ children }: { children: React.ReactNode }) {
 
         const {
           data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
           if (session?.user) {
             const googleUser: AuthUser = {
               id: session.user.id,

@@ -73,8 +73,8 @@ export default function MissionVision() {
             {/* Left-Aligned Mission Description */}
             <p className="text-sm sm:text-base text-slate-800 font-normal leading-relaxed text-left w-full">
               To provide environmental sustainability through IoT-enabled recycling
-              incentives while supporting animal welfare by providing food for
-              stray cats and dogs, empowering communities with a secure,
+              incentives while supporting animal welfare by providing treats for
+              animals in need, empowering communities with a secure,
               efficient, and data-driven solution for responsible waste
               management.
             </p>

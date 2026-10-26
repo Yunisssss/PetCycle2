@@ -33,7 +33,7 @@ const featuresList: FeatureData[] = [
     id: "dispensing",
     title: "Automated Pet Food Dispensing",
     description:
-      "Automatically dispenses measured portions of fresh pet food for every accepted recyclable item, helping feed community animals.",
+      "Automatically dispenses measured pet treats every accepted recyclable item, helping feed community animals.",
     icon: Utensils,
     angle: -30,
   },
@@ -41,7 +41,7 @@ const featuresList: FeatureData[] = [
     id: "analytics",
     title: "Data Analytics & Reporting",
     description:
-      "Live tracking of recycling metrics, inventory consumption rates, and stray feeding impact through comprehensive dashboards.",
+      "Live tracking of recycling metrics, inventory consumption rates, and feeding impact through comprehensive dashboards.",
     icon: BarChart3,
     angle: 0,
   },
@@ -57,7 +57,7 @@ const featuresList: FeatureData[] = [
     id: "storage",
     title: "Storage Management",
     description:
-      "Secure, high-capacity, climate-protected storage holds both compressed recyclables and fresh pet food supplies safely.",
+      "Secure, high-capacity, climate-protected storage holds both compressed recyclables and fresh pet treats supplies safely.",
     icon: Trash2,
     angle: 60,
   },
@@ -73,14 +73,14 @@ const howItWorksSteps = [
   {
     id: "reward",
     title: "Earn a Reward",
-    description: "Each validated item dispenses a 2-gram portion of cat or dog food.",
+    description: "Each validated item redeems a point redeemable for treats.",
     icon: null, // Custom Bowl icon with heart
   },
   {
     id: "impact",
     title: "Make an Impact",
     description:
-      "Your action supports responsible waste management and helps feed stray animals by supporting PetCycle.",
+      "Your action supports responsible waste management and helps feed animals in need by supporting PetCycle.",
     icon: TrendingUp,
   },
 ];
@@ -98,7 +98,7 @@ export default function FeaturesAndWorkflow() {
       {/* Balanced layout maximizing space and centering section elements */}
       <div className="w-full max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-28 2xl:gap-36 items-start w-full">
-          
+
           {/* ================= LEFT COLUMN: KEY FEATURES ================= */}
           <div className="w-full flex flex-col items-center">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 sm:mb-10 tracking-tight">
@@ -106,10 +106,10 @@ export default function FeaturesAndWorkflow() {
             </h2>
 
             <div className="w-full max-w-xl lg:max-w-2xl mx-auto flex flex-col sm:flex-row items-center sm:items-start justify-center gap-6 md:gap-8 lg:gap-10">
-              
+
               {/* Left Orbit & Central Dynamic Icon */}
               <div className="relative w-64 h-64 sm:w-72 sm:h-72 shrink-0 flex items-center justify-center mx-auto sm:mx-0">
-                
+
                 {/* Fixed Arc Path on the Left */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   {/* Dashed circular orbit line */}
@@ -121,11 +121,10 @@ export default function FeaturesAndWorkflow() {
                 <button
                   type="button"
                   onClick={() => toggleFeature("alerts")}
-                  className={`absolute top-2 left-10 sm:left-12 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${
-                    activeFeature === "alerts"
-                      ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
-                      : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
-                  }`}
+                  className={`absolute top-2 left-10 sm:left-12 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${activeFeature === "alerts"
+                    ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
+                    : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
+                    }`}
                   title="Alerts & Notifications"
                   aria-label="Alerts & Notifications"
                 >
@@ -136,13 +135,12 @@ export default function FeaturesAndWorkflow() {
                 <button
                   type="button"
                   onClick={() => toggleFeature("dispensing")}
-                  className={`absolute top-14 left-2 sm:left-3 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${
-                    activeFeature === "dispensing"
-                      ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
-                      : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
-                  }`}
-                  title="Automated Pet Food Dispensing"
-                  aria-label="Automated Pet Food Dispensing"
+                  className={`absolute top-14 left-2 sm:left-3 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${activeFeature === "dispensing"
+                    ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
+                    : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
+                    }`}
+                  title="Automated Pet Treat Dispensing"
+                  aria-label="Automated Pet Treat Dispensing"
                 >
                   <Utensils className="w-5 h-5" />
                 </button>
@@ -151,11 +149,10 @@ export default function FeaturesAndWorkflow() {
                 <button
                   type="button"
                   onClick={() => toggleFeature("analytics")}
-                  className={`absolute top-1/2 -left-2 sm:-left-3 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${
-                    activeFeature === "analytics"
-                      ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
-                      : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
-                  }`}
+                  className={`absolute top-1/2 -left-2 sm:-left-3 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${activeFeature === "analytics"
+                    ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
+                    : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
+                    }`}
                   title="Data Analytics & Reporting"
                   aria-label="Data Analytics & Reporting"
                 >
@@ -166,11 +163,10 @@ export default function FeaturesAndWorkflow() {
                 <button
                   type="button"
                   onClick={() => toggleFeature("recycling")}
-                  className={`absolute bottom-14 left-2 sm:left-3 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${
-                    activeFeature === "recycling"
-                      ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
-                      : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
-                  }`}
+                  className={`absolute bottom-14 left-2 sm:left-3 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${activeFeature === "recycling"
+                    ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
+                    : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
+                    }`}
                   title="Smart Recycling & Validation"
                   aria-label="Smart Recycling & Validation"
                 >
@@ -181,11 +177,10 @@ export default function FeaturesAndWorkflow() {
                 <button
                   type="button"
                   onClick={() => toggleFeature("storage")}
-                  className={`absolute bottom-2 left-10 sm:left-12 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${
-                    activeFeature === "storage"
-                      ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
-                      : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
-                  }`}
+                  className={`absolute bottom-2 left-10 sm:left-12 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 z-20 cursor-pointer shadow-sm ${activeFeature === "storage"
+                    ? "bg-[#A32801] text-white ring-4 ring-[#A32801]/25 scale-110 shadow-md"
+                    : "bg-[#dcf3eb] text-[#164e3f] hover:scale-105 hover:bg-emerald-100"
+                    }`}
                   title="Storage Management"
                   aria-label="Storage Management"
                 >
@@ -194,7 +189,7 @@ export default function FeaturesAndWorkflow() {
 
                 {/* Center Circle: Shows default Paw when unselected, or active feature icon */}
                 <div className="relative z-10 w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-[#dcf3eb] border-2 border-[#164e3f] flex items-center justify-center shadow-md transition-all duration-300">
-                  
+
                   {/* Default: Paw Icon (No Selection) */}
                   {activeFeature === null && (
                     <div className="animate-fadeIn flex items-center justify-center">
@@ -305,17 +300,15 @@ export default function FeaturesAndWorkflow() {
                       <button
                         type="button"
                         onClick={() => toggleFeature(item.id)}
-                        className={`w-full py-3 px-5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center justify-between border cursor-pointer ${
-                          isOpen
-                            ? "bg-[#A32801] text-white border-[#A32801] shadow-md shadow-[#A32801]/25"
-                            : "bg-white text-[#164e3f] border-[#164e3f] hover:bg-emerald-50/70"
-                        }`}
+                        className={`w-full py-3 px-5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center justify-between border cursor-pointer ${isOpen
+                          ? "bg-[#A32801] text-white border-[#A32801] shadow-md shadow-[#A32801]/25"
+                          : "bg-white text-[#164e3f] border-[#164e3f] hover:bg-emerald-50/70"
+                          }`}
                       >
                         <span className="truncate pr-3">{item.title}</span>
                         <ChevronDown
-                          className={`w-4 h-4 shrink-0 transition-transform duration-300 ${
-                            isOpen ? "rotate-180 text-white" : "text-[#164e3f]"
-                          }`}
+                          className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-white" : "text-[#164e3f]"
+                            }`}
                         />
                       </button>
 

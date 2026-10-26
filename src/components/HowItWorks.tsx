@@ -50,7 +50,7 @@ export default function HowItWorks() {
               Earn a Reward
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Each validated item dispenses a 2-gram portion of cat or dog food.
+              Each validated amount of points, users can redeem a cat or dog treat.
             </p>
           </div>
 
@@ -63,7 +63,7 @@ export default function HowItWorks() {
               Make an Impact
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Your action supports responsible waste management and helps feed stray animals by supporting PetCycle.
+              Your action supports responsible waste management and helps feed animals in need by supporting PetCycle.
             </p>
           </div>
         </div>

@@ -16,15 +16,15 @@ const features: FeatureItem[] = [
     pillTitle: "Alerts & Notifications",
     displayTitle: "Alerts & Notifications",
     description:
-      "Sends instant alerts when food inventory is low or recycling bins are full, ensuring smooth and continuous operations.",
+      "Sends instant alerts when treat inventory is low or recycling bins are full, ensuring smooth and continuous operations.",
     icon: Bell,
   },
   {
     id: "dispensing",
-    pillTitle: "Automated Pet Food Dispensing",
-    displayTitle: "Pet Food Dispensing",
+    pillTitle: "Automated Pet Treats Dispensing",
+    displayTitle: "Pet Treats Dispensing",
     description:
-      "Automatically dispenses pet food for every accepted recyclable item, helping provide accessible food for stray animals.",
+      "Automatically dispenses pet treats for every accepted recyclable item, helping provide accessible treats for animals.",
     icon: Utensils,
   },
   {
@@ -32,7 +32,7 @@ const features: FeatureItem[] = [
     pillTitle: "Data Analytics & Reporting",
     displayTitle: "Data Analytics & Reporting",
     description:
-      "Live tracking of recycling metrics, inventory consumption, and stray animal welfare impact via intuitive dashboards.",
+      "Live tracking of recycling metrics, inventory consumption, and animal welfare impact via intuitive dashboards.",
     icon: BarChart3,
   },
   {
@@ -77,11 +77,10 @@ export default function KeyFeatures() {
                 <button
                   key={feature.id}
                   onClick={() => setActiveFeatureId(feature.id)}
-                  className={`w-full py-3 px-5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 text-center border shadow-sm ${
-                    isActive
-                      ? "bg-[#A32801] text-white border-[#A32801] shadow-[#A32801]/30"
-                      : "bg-white text-[#164e3f] border-[#164e3f] hover:bg-emerald-50/60"
-                  }`}
+                  className={`w-full py-3 px-5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 text-center border shadow-sm ${isActive
+                    ? "bg-[#A32801] text-white border-[#A32801] shadow-[#A32801]/30"
+                    : "bg-white text-[#164e3f] border-[#164e3f] hover:bg-emerald-50/60"
+                    }`}
                 >
                   {feature.pillTitle}
                 </button>
@@ -158,11 +157,10 @@ export default function KeyFeatures() {
               {/* Satellite 1: Top (Bell) */}
               <button
                 onClick={() => setActiveFeatureId("alerts")}
-                className={`absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${
-                  activeFeatureId === "alerts"
-                    ? "bg-[#A32801] text-white shadow-md scale-110"
-                    : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
-                }`}
+                className={`absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${activeFeatureId === "alerts"
+                  ? "bg-[#A32801] text-white shadow-md scale-110"
+                  : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
+                  }`}
                 title="Alerts & Notifications"
               >
                 <Bell className="w-5 h-5" />
@@ -171,11 +169,10 @@ export default function KeyFeatures() {
               {/* Satellite 2: Top Right (Dispensing) */}
               <button
                 onClick={() => setActiveFeatureId("dispensing")}
-                className={`absolute top-10 right-1 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${
-                  activeFeatureId === "dispensing"
-                    ? "bg-[#A32801] text-white shadow-md scale-110"
-                    : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
-                }`}
+                className={`absolute top-10 right-1 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${activeFeatureId === "dispensing"
+                  ? "bg-[#A32801] text-white shadow-md scale-110"
+                  : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
+                  }`}
                 title="Automated Pet Food Dispensing"
               >
                 <Utensils className="w-5 h-5" />
@@ -184,11 +181,10 @@ export default function KeyFeatures() {
               {/* Satellite 3: Bottom Right (Recycling) */}
               <button
                 onClick={() => setActiveFeatureId("recycling")}
-                className={`absolute bottom-2 right-8 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${
-                  activeFeatureId === "recycling"
-                    ? "bg-[#A32801] text-white shadow-md scale-110"
-                    : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
-                }`}
+                className={`absolute bottom-2 right-8 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${activeFeatureId === "recycling"
+                  ? "bg-[#A32801] text-white shadow-md scale-110"
+                  : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
+                  }`}
                 title="Smart Recycling & Validation"
               >
                 <Recycle className="w-5 h-5" />
@@ -197,11 +193,10 @@ export default function KeyFeatures() {
               {/* Satellite 4: Bottom Left (Analytics) */}
               <button
                 onClick={() => setActiveFeatureId("analytics")}
-                className={`absolute bottom-2 left-8 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${
-                  activeFeatureId === "analytics"
-                    ? "bg-[#A32801] text-white shadow-md scale-110"
-                    : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
-                }`}
+                className={`absolute bottom-2 left-8 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${activeFeatureId === "analytics"
+                  ? "bg-[#A32801] text-white shadow-md scale-110"
+                  : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
+                  }`}
                 title="Data Analytics & Reporting"
               >
                 <BarChart3 className="w-5 h-5" />
@@ -210,11 +205,10 @@ export default function KeyFeatures() {
               {/* Satellite 5: Left (Storage) */}
               <button
                 onClick={() => setActiveFeatureId("storage")}
-                className={`absolute top-10 left-1 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${
-                  activeFeatureId === "storage"
-                    ? "bg-[#A32801] text-white shadow-md scale-110"
-                    : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
-                }`}
+                className={`absolute top-10 left-1 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 ${activeFeatureId === "storage"
+                  ? "bg-[#A32801] text-white shadow-md scale-110"
+                  : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
+                  }`}
                 title="Storage Management"
               >
                 <Archive className="w-5 h-5" />
