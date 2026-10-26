@@ -20,7 +20,7 @@ export default function Footer() {
 
           {/* Tagline */}
           <p className="max-w-lg text-xs sm:text-sm text-amber-100/80 leading-relaxed mb-6 font-normal">
-            An IoT-Enabled Reward-Based Recycling System for Urban Waste Management and Pet Food Dispensing
+            An IoT-Enabled Reward-Based Recycling System for Urban Waste Management and Pet Treat Dispensing
           </p>
 
           {/* Social Icons */}
