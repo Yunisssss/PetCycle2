@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 
 interface CardItem {
   title: string;
@@ -12,21 +11,21 @@ const cards: CardItem[] = [
   {
     title: "Collect Recyclable Waste",
     description:
-      "Sends instant alerts when food inventory is low or recycling bins are full, ensuring smooth and continuous operations.",
+      "Divert plastic bottles and aluminum cans from landfills through automated collection kiosks that sort, measure, and process recyclables with ease.",
     imageSrc: "/images/collect-waste.jpg",
     altText: "Volunteer holding a container filled with recyclable plastic bottles",
   },
   {
-    title: "Feed Stray Animals",
+    title: "Feed Pet Animals",
     description:
-      "Sends instant alerts when food inventory is low or recycling bins are full, ensuring smooth and continuous operations.",
+      "Convert each recycled container into nutritious food and treats for community pets and shelter animals, promoting daily care and compassion.",
     imageSrc: "/images/feed-strays.jpg",
     altText: "Stray cats and dog eating nutritious food outdoors from clean bowls",
   },
   {
     title: "Strengthening The Community",
     description:
-      "Sends instant alerts when food inventory is low or recycling bins are full, ensuring smooth and continuous operations.",
+      "Unite eco-conscious residents, local volunteers, and animal shelters around shared eco-friendly habits to build cleaner, more caring neighborhoods.",
     imageSrc: "/images/community.jpg",
     altText: "Community volunteers smiling together after sustainability event",
   },
