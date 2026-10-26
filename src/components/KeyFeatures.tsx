@@ -173,7 +173,7 @@ export default function KeyFeatures() {
                   ? "bg-[#A32801] text-white shadow-md scale-110"
                   : "bg-[#dcf3eb] text-[#164e3f] border border-[#22c55e]/50 hover:scale-105"
                   }`}
-                title="Automated Pet Food Dispensing"
+                title="Automated Pet Treat Dispensing"
               >
                 <Utensils className="w-5 h-5" />
               </button>
